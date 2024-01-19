@@ -45,3 +45,24 @@ class ProductListByShopAndCategory(generics.ListAPIView):
             return Product.objects.none()
 
         return Product.objects.filter(shop=shop, category=category)
+
+
+from rest_framework import generics
+from rest_framework import permissions
+from .models import Category, Shop
+from .serializers import CategorySerializer
+
+class CategoryListByShop(generics.ListAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.AllowAny]  # Adjust permissions as needed
+
+    def get_queryset(self):
+        shop_name = self.kwargs['shop_name']
+
+        try:
+            shop = Shop.objects.get(name=shop_name)
+        except Shop.DoesNotExist:
+            return Category.objects.none()
+
+        return Category.objects.filter(shop_type=shop.shop_type)
+
